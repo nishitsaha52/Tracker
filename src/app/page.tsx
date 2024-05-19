@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import GoalTracker from '../components/GoalTracker';
 import ProgressBar from '../components/ProgressBar';
 import ProgressGraph from '../components/ProgressGraph';
 import BottomNavigation from '../components/BottomNavigation';
-
 import styled from 'styled-components';
 
 const initialGoals = [
@@ -23,10 +22,10 @@ interface ProgressData {
 }
 
 const Home: React.FC = () => {
-  const [goals, setGoals] = useState(initialGoals);
-  const [progressData, setProgressData] = useState<ProgressData[]>([]);
+  const [goals, setGoals] = React.useState(initialGoals);
+  const [progressData, setProgressData] = React.useState<ProgressData[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const savedGoalsString = localStorage.getItem('goals');
     const savedGoals = savedGoalsString ? JSON.parse(savedGoalsString) : initialGoals;
     setGoals(savedGoals);
@@ -36,7 +35,7 @@ const Home: React.FC = () => {
     setProgressData(savedProgressData);
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
 
     const progress = (goals.filter(goal => goal.completed).length / goals.length) * 100;
@@ -58,15 +57,17 @@ const Home: React.FC = () => {
   const progress = (goals.filter(goal => goal.completed).length / goals.length) * 100;
 
   return (
+    <div className="home">
     <Container>
       <Content>
         <ProgressBar progress={progress} currentStep={goals.filter(goal => goal.completed).length} totalSteps={goals.length} />
         <Title>Todays Goal</Title>
         <GoalTracker goals={goals} setGoals={setGoals} />
         <ProgressGraph data={progressData} />
-        <BottomNavigation />
       </Content>
     </Container>
+    <BottomNavigation />
+    </div>
   );
 };
 

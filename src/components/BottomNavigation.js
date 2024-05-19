@@ -1,16 +1,12 @@
-// BottomNavigation.js
 import React from 'react';
 import Link from 'next/link';
 import { FaFire, FaDumbbell, FaUtensils, FaWalking } from 'react-icons/fa';
 import styled from 'styled-components';
-import useActivePage from '../hooks/useActivePage'; // Fix the import path
 
 const BottomNavigation = () => {
-  const activePage = useActivePage();
-
   return (
     <NavContainer>
-      <NavItem active={activePage === 'Page1'}>
+      <NavItem>
         <Link href="/" passHref>
           <NavLink>
             <FaFire />
@@ -18,7 +14,7 @@ const BottomNavigation = () => {
           </NavLink>
         </Link>
       </NavItem>
-      <NavItem active={activePage === 'Page2'}>
+      <NavItem>
         <Link href="/page2" passHref>
           <NavLink>
             <FaDumbbell />
@@ -26,7 +22,7 @@ const BottomNavigation = () => {
           </NavLink>
         </Link>
       </NavItem>
-      <NavItem active={activePage === 'Page3'}>
+      <NavItem>
         <Link href="/page3" passHref>
           <NavLink>
             <FaUtensils />
@@ -34,7 +30,7 @@ const BottomNavigation = () => {
           </NavLink>
         </Link>
       </NavItem>
-      <NavItem active={activePage === 'Page4'}>
+      <NavItem>
         <Link href="/page4" passHref>
           <NavLink>
             <FaWalking />
@@ -61,7 +57,7 @@ const NavItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: ${({ active }) => (active ? 'yellow' : 'white')}; /* Set active page color to yellow */
+  color: white; /* Set default color to white */
   font-size: 20px;
 
   span {
@@ -69,7 +65,7 @@ const NavItem = styled.div`
   }
 `;
 
-const NavLink = styled.a`
+const NavLink = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
