@@ -1,8 +1,44 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { FaDumbbell, FaBook, FaWalking, FaBed, FaTint } from 'react-icons/fa';
 import SwipeButton from './SwipeButton';
+
+// Helper function to get the icon based on the goal name
+const getIcon = (name) => {
+  switch (name) {
+    case 'Workout for 20 mins':
+      return <FaDumbbell />;
+    case 'Read book for 15 mins':
+      return <FaBook />;
+    case '30 mins walk':
+      return <FaWalking />;
+    case 'Sleep at 11 sharp':
+      return <FaBed />;
+    case 'Drink 3L water':
+      return <FaTint />;
+    default:
+      return null;
+  }
+};
+
+// Helper function to get the icon color based on the goal name
+const getIconColor = (name) => {
+  switch (name) {
+    case 'Workout for 20 mins':
+      return '#6C63FF';
+    case 'Read book for 15 mins':
+      return '#FF6B6B';
+    case '30 mins walk':
+      return '#66BB6A';
+    case 'Sleep at 11 sharp':
+      return '#4FC3F7';
+    case 'Drink 3L water':
+      return '#FFC300';
+    default:
+      return '#333';
+  }
+};
 
 const GoalTracker = ({ goals, setGoals }) => {
   const [isTrackingAll, setIsTrackingAll] = useState(false);
@@ -20,53 +56,19 @@ const GoalTracker = ({ goals, setGoals }) => {
     setTimeout(() => setIsTrackingAll(false), 2000);
   }, [goals, setGoals]);
 
-  const getIcon = useMemo(() => (name) => {
-    switch (name) {
-      case 'Workout for 20 mins':
-        return <FaDumbbell />;
-      case 'Read book for 15 mins':
-        return <FaBook />;
-      case '30 mins walk':
-        return <FaWalking />;
-      case 'Sleep at 11 sharp':
-        return <FaBed />;
-      case 'Drink 3L water':
-        return <FaTint />;
-      default:
-        return null;
-    }
-  }, []);
-
-  const getIconColor = useMemo(() => (name) => {
-    switch (name) {
-      case 'Workout for 20 mins':
-        return '#6C63FF';
-      case 'Read book for 15 mins':
-        return '#FF6B6B';
-      case '30 mins walk':
-        return '#66BB6A';
-      case 'Sleep at 11 sharp':
-        return '#4FC3F7';
-      case 'Drink 3L water':
-        return '#FFC300';
-      default:
-        return '#333';
-    }
-  }, []);
-
   return (
-    <Container>
+    <Wrapper>
       {goals.map((goal, index) => (
         <GoalContainer key={index} onClick={() => toggleGoal(index)}>
           <GoalItem completed={goal.completed}>
             <IconContainer iconColor={getIconColor(goal.name)}>
-              <Icon>{getIcon(goal.name)}</Icon>
+              {getIcon(goal.name)}
             </IconContainer>
             <GoalText>{goal.name}</GoalText>
             <CustomCheckbox
               type="checkbox"
               checked={goal.completed}
-              onChange={() => {}}
+              onChange={() => toggleGoal(index)} // Added toggleGoal to onChange
               aria-label={`Toggle ${goal.name}`}
               checkboxColor={getIconColor(goal.name)}
             />
@@ -74,9 +76,12 @@ const GoalTracker = ({ goals, setGoals }) => {
         </GoalContainer>
       ))}
       <SwipeButton onSwipe={trackAllGoals} />
-    </Container>
+    </Wrapper>
   );
 };
+
+// Setting the displayName property
+GoalTracker.displayName = 'GoalTracker';
 
 GoalTracker.propTypes = {
   goals: PropTypes.arrayOf(
@@ -88,23 +93,19 @@ GoalTracker.propTypes = {
   setGoals: PropTypes.func.isRequired,
 };
 
-const Container = styled.div`
-  width: 100%;
-  margin-bottom: 20px;
-  background-color: #000;
-  border-radius: 10px;
-  padding: 10px;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const GoalContainer = styled.div`
   cursor: pointer;
-  margin-bottom: 10px; /* Add space between goal containers */
+  margin-bottom: 10px;
 `;
 
 const GoalItem = styled.div`
   display: flex;
   align-items: center;
-  background-color: #000;
   padding: 15px;
   border-radius: 8px;
   opacity: ${({ completed }) => (completed ? 0.5 : 1)};
@@ -113,8 +114,8 @@ const GoalItem = styled.div`
 
 const CustomCheckbox = styled.input`
   margin-left: auto;
-  width: 24px; /* Increase checkbox width */
-  height: 24px; /* Increase checkbox height */
+  width: 24px;
+  height: 24px;
   border-radius: 4px;
   appearance: none;
   background-color: white;
@@ -127,10 +128,10 @@ const CustomCheckbox = styled.input`
     &:after {
       content: '';
       position: absolute;
-      top: 4px; /* Adjust the position of the checkmark */
-      left: 8px; /* Adjust the position of the checkmark */
-      width: 8px; /* Adjust the size of the checkmark */
-      height: 12px; /* Adjust the size of the checkmark */
+      top: 4px;
+      left: 8px;
+      width: 8px;
+      height: 12px;
       border: solid white;
       border-width: 0 2px 2px 0;
       transform: rotate(45deg);
@@ -141,8 +142,6 @@ const CustomCheckbox = styled.input`
 const GoalText = styled.span`
   flex-grow: 1;
   margin-left: 10px;
-  color: white;
-  font-size: 16px;
 `;
 
 const IconContainer = styled.div`
@@ -154,11 +153,6 @@ const IconContainer = styled.div`
   border-radius: 50%;
   background-color: ${({ iconColor }) => iconColor};
   margin-right: 10px;
-`;
-
-const Icon = styled.div`
-  font-size: 24px;
-  color: white;
 `;
 
 export default GoalTracker;

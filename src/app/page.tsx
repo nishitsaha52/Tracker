@@ -9,22 +9,30 @@ import BottomNavigation from '../components/BottomNavigation';
 import styled from 'styled-components';
 
 const initialGoals = [
-  { name: 'Workout for 20 mins', completed: false },
-  { name: 'Read book for 15 mins', completed: false },
-  { name: '30 mins walk', completed: false },
-  { name: 'Sleep at 11 sharp', completed: false },
-  { name: 'Drink 3L water', completed: false },
+  { name: "Workout for 20 mins", completed: false },
+  { name: "Read book for 15 mins", completed: false },
+  { name: "30 mins walk", completed: false },
+  { name: "Sleep at 11 sharp", completed: false },
+  { name: "Drink 3L water", completed: false },
 ];
 
-const Home = () => {
+// Define an interface for progress data
+interface ProgressData {
+  date: string;
+  progress: number;
+}
+
+const Home: React.FC = () => {
   const [goals, setGoals] = useState(initialGoals);
-  const [progressData, setProgressData] = useState([]);
+  const [progressData, setProgressData] = useState<ProgressData[]>([]);
 
   useEffect(() => {
-    const savedGoals = JSON.parse(localStorage.getItem('goals')) || initialGoals;
+    const savedGoalsString = localStorage.getItem('goals');
+    const savedGoals = savedGoalsString ? JSON.parse(savedGoalsString) : initialGoals;
     setGoals(savedGoals);
 
-    const savedProgressData = JSON.parse(localStorage.getItem('progressData')) || [];
+    const savedProgressDataString = localStorage.getItem('progressData');
+    const savedProgressData: ProgressData[] = savedProgressDataString ? JSON.parse(savedProgressDataString) : [];
     setProgressData(savedProgressData);
   }, []);
 
@@ -35,7 +43,7 @@ const Home = () => {
     const today = new Date().toLocaleDateString();
 
     const newProgressData = [...progressData];
-    const todayDataIndex = newProgressData.findIndex(data => data.date === today);
+    const todayDataIndex = newProgressData.findIndex((data: ProgressData) => data.date === today);
 
     if (todayDataIndex >= 0) {
       newProgressData[todayDataIndex].progress = progress;
@@ -45,7 +53,7 @@ const Home = () => {
 
     setProgressData(newProgressData);
     localStorage.setItem('progressData', JSON.stringify(newProgressData));
-  }, [goals]);
+  }, [goals, progressData]);
 
   const progress = (goals.filter(goal => goal.completed).length / goals.length) * 100;
 
@@ -53,7 +61,7 @@ const Home = () => {
     <Container>
       <Content>
         <ProgressBar progress={progress} currentStep={goals.filter(goal => goal.completed).length} totalSteps={goals.length} />
-        <Title>Today's Goal</Title>
+        <Title>Todays Goal</Title>
         <GoalTracker goals={goals} setGoals={setGoals} />
         <ProgressGraph data={progressData} />
         <BottomNavigation />

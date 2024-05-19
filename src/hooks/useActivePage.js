@@ -1,26 +1,20 @@
-// useActivePage.js
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 const useActivePage = () => {
   const [activePage, setActivePage] = useState('Page1');
+  const router = useRouter();
 
   useEffect(() => {
-    // Import useRouter dynamically to avoid SSR issues
-    const useRouter = () => import('next/router').then((mod) => mod.useRouter);
-    const fetchRouter = async () => {
-      const router = await useRouter();
-      const { pathname } = router();
-      const routeToPageMap = {
-        '/': 'Page1',
-        '/page2': 'Page2',
-        '/page3': 'Page3',
-        '/page4': 'Page4',
-      };
-      setActivePage(routeToPageMap[pathname] || 'Page1');
+    const routeToPageMap = {
+      '/': 'Page1',
+      '/page2': 'Page2',
+      '/page3': 'Page3',
+      '/page4': 'Page4',
     };
-
-    fetchRouter();
-  }, []);
+    
+    setActivePage(routeToPageMap[router.pathname] || 'Page1');
+  }, [router.pathname]);
 
   return activePage;
 };
